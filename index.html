@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cell Distribution Calculator</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid white;
+            margin: 10px;
+        }
+        #container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .error-message {
+            color: red;
+            font-size: large;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cell Distribution Calculator</h1>
+    <div id="error-message" class="error-message"></div>
+    <input type="file" id="fileInput" accept=".png, .jpg, .jpeg" style="display:none" onchange="displayImage(event)">
+    <br>
+    <button onclick="uploadImage()">Upload Image</button>
+    <br><br>
+    <div id="container">
+        <div>
+            <h2>Original Image</h2>
+            <canvas id="originalCanvas" style="max-width: 400px; max-height: 400px;"></canvas>
+        </div>
+        <div>
+            <h2>Processed Image</h2>
+            <canvas id="processedCanvas" style="max-width: 400px; max-height: 400px;"></canvas>
+        </div>
+    </div>
+    <div>
+        <h2>Parameter Entry:</h2>
+        <br>
+        <label for="blueMaxFilter">Filter out regions with b values below: </label>
+        <input type="number" id="blueMaxFilter" step="1" value="40">
+        <br>
+        <label for="blueMinNuclei">Nuclei regions have b values above: </label>
+        <input type="number" id="blueMinNuclei" step="1" value="100">            
+        <br><br>
+        <button onclick="confirmParameters()">Confirm</button>
+    </div>
+    <div id="results">
+        <br>
+        <li><sup>Cell Area</sup>&frasl;<sub>Total Area</sub> = <span id="cell_per_area"></span></li>
+        <li><sup>Nuclei Area</sup>&frasl;<sub>Empty Area</sub> = <span id="cell_to_empty"></span></li>
+    </div>
+    <br>
+    <script src="image processor.js"></script>
+</body>
+</html>
