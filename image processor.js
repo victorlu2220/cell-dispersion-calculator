@@ -79,9 +79,10 @@ function processImage() {
 
     processedCtx.putImageData(imageData, 0, 0);
     const cellPerArea = cellArea / totalArea;
+    const cellToEmpty = nucleiArea / (totalArea-cellArea)
+    document.getElementById('cell_per_area').innerText = `${cellPerArea.toFixed(5)}`;
+    document.getElementById('cell_to_empty').innerText = `${cellToEmpty.toFixed(5)}`;
 
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = `<p>Cell Per Area: ${cellPerArea.toFixed(4)}</p>`;
 }
 
 function toggleMode() {
