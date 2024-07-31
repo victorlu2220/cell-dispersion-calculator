@@ -1,4 +1,5 @@
 let imgElement;
+let sliderMode = false;
 
 function uploadImage() {
     document.getElementById('fileInput').click();
@@ -23,28 +24,34 @@ function displayImage(event) {
     }
 }
 
-function confirmParameters() {
+function updateParameters() {
+    const blueMaxFilter = document.getElementById("blueMaxFilter").value;
+    const blueMinNuclei = document.getElementById("blueMinNuclei").value;
+
+    if (sliderMode) {
+        document.getElementById("blueMaxFilterValue").innerText = blueMaxFilter;
+        document.getElementById("blueMinNucleiValue").innerText = blueMinNuclei;
+    }
+
     if (imgElement) {
-        processImage(imgElement);
-    } else {
-        document.getElementById('error-message').innerText = "Please upload an image first.";
+        processImage();
     }
 }
 
-function processImage(img) {
+function processImage() {
     const blueMaxforFilter = parseInt(document.getElementById("blueMaxFilter").value);
     const blueMinNuclei = parseInt(document.getElementById("blueMinNuclei").value);
 
     const processedCanvas = document.getElementById('processedCanvas');
     const originalCanvas = document.getElementById('originalCanvas');
 
-    processedCanvas.width = img.width;
-    processedCanvas.height = img.height;
+    processedCanvas.width = imgElement.width;
+    processedCanvas.height = imgElement.height;
 
     const originalCtx = originalCanvas.getContext('2d');
     const processedCtx = processedCanvas.getContext('2d');
 
-    const imageData = originalCtx.getImageData(0, 0, img.width, img.height);
+    const imageData = originalCtx.getImageData(0, 0, imgElement.width, imgElement.height);
     const data = imageData.data;
     let totalArea = 0;
     let cellArea = 0;
@@ -54,7 +61,7 @@ function processImage(img) {
         const r = data[i];
         const g = data[i + 1];
         const b = data[i + 2];
-        if (r <= blueMaxforFilter && g <= blueMaxforFilter && b <= blueMaxforFilter || (r >= 245 && g >= 245 && b >= 245)) {
+        if (r <= blueMaxforFilter && g <= blueMaxforFilter && b <= blueMaxforFilter) {
             data[i] = 255;
             data[i + 1] = 255;
             data[i + 2] = 255;
@@ -71,10 +78,36 @@ function processImage(img) {
     }
 
     processedCtx.putImageData(imageData, 0, 0);
-
     const cellPerArea = cellArea / totalArea;
-    const cellToEmpty = nucleiArea / (totalArea-cellArea)
-    document.getElementById('cell_per_area').innerText = `${cellPerArea.toFixed(5)}`;
-    document.getElementById('cell_to_empty').innerText = `${cellToEmpty.toFixed(5)}`;
 
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = `<p>Cell Per Area: ${cellPerArea.toFixed(4)}</p>`;
 }
+
+function toggleMode() {
+    const parameterEntryDiv = document.getElementById('parameterEntry');
+    const toggleButton = document.getElementById('toggleModeButton');
+    if (sliderMode) {
+        parameterEntryDiv.innerHTML = `
+            <label for="blueMaxFilter">Filter out regions with b values below: </label>
+            <input type="number" id="blueMaxFilter" step="1" value="40">
+            <br>
+            <label for="blueMinNuclei">Nuclei regions have b values above: </label>
+            <input type="number" id="blueMinNuclei" step="1" value="100">
+        `;
+        toggleButton.innerText = "Switch to Slider Mode";
+    } else {
+        parameterEntryDiv.innerHTML = `
+            <label for="blueMaxFilter">Filter out regions with b values below: </label>
+            <input type="range" id="blueMaxFilter" min="0" max="255" value="40" oninput="updateParameters()">
+            <span id="blueMaxFilterValue">40</span>
+            <br>
+            <label for="blueMinNuclei">Nuclei regions have b values above: </label>
+            <input type="range" id="blueMinNuclei" min="0" max="255" value="100" oninput="updateParameters()">
+            <span id="blueMinNucleiValue">100</span>
+        `;
+        toggleButton.innerText = "Switch to Box Entry Mode";
+    }
+    sliderMode = !sliderMode;
+}
+
