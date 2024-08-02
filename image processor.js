@@ -79,10 +79,11 @@ function processImage() {
 
     processedCtx.putImageData(imageData, 0, 0);
     const cellPerArea = cellArea / totalArea;
-    const cellToEmpty = nucleiArea / (totalArea-cellArea)
+    const nucleiToEmpty = nucleiArea / (totalArea-cellArea)
+    const nucleiToCell = nucleiArea / cellArea
     document.getElementById('cell_per_area').innerText = `${cellPerArea.toFixed(5)}`;
-    document.getElementById('cell_to_empty').innerText = `${cellToEmpty.toFixed(5)}`;
-
+    document.getElementById('nuclei_to_empty').innerText = `${nucleiToEmpty.toFixed(5)}`;
+    document.getElementById('nuclei_to_cell').innerText = `${nucleiToCell.toFixed(5)}`;
 }
 
 function toggleMode() {
